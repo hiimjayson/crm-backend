@@ -2,18 +2,19 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AuthController } from './auth/auth.controller';
-import { AuthService } from './auth/auth.service';
-import { UserRepository } from './auth/user.repository';
-import { SessionService } from './auth/session.service';
+import { AuthModule } from './features/auth/auth.module';
+import { UserModule } from './features/user/user.module';
+
+const featureModules = [AuthModule, UserModule];
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    ...featureModules,
   ],
-  controllers: [AppController, AuthController],
-  providers: [AppService, AuthService, UserRepository, SessionService],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}
