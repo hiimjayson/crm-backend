@@ -1,11 +1,10 @@
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+import type { INestApplication } from '@nestjs/common';
+import { bootstrap } from './bootstrap';
 
-async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+let nestApp: INestApplication | undefined;
 
-  app.enableCors();
+(async () => {
+  nestApp = await bootstrap();
+})();
 
-  await app.listen(Number(process.env.PORT) ?? 3000);
-}
-bootstrap();
+export const app = nestApp;

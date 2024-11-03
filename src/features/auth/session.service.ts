@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
+import { addMinutes, isAfter } from 'date-fns';
 
 @Injectable()
 export class SessionService {
@@ -10,14 +11,18 @@ export class SessionService {
     const sessionId = uuidv4();
     this.sessions.set(sessionId, {
       userId,
-      expiresAt: new Date(Date.now() + 30 * 60 * 1000),
+      expiresAt: addMinutes(new Date(), 30),
     });
     return sessionId;
   }
 
   getUserId(sessionId: string): string | undefined {
     const session = this.sessions.get(sessionId);
-    if (session && session.expiresAt > new Date()) {
+    console.log(sessionId, session);
+    if (
+      session
+      // && isAfter(session.expiresAt, new Date())
+    ) {
       return session.userId;
     }
     return undefined;
@@ -26,7 +31,7 @@ export class SessionService {
   extendSession(sessionId: string): string {
     const session = this.sessions.get(sessionId);
     if (session) {
-      session.expiresAt = new Date(Date.now() + 30 * 60 * 1000);
+      session.expiresAt = addMinutes(new Date(), 30);
       this.sessions.set(sessionId, session);
       return sessionId;
     }
